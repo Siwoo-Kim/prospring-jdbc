@@ -83,6 +83,11 @@ public class JdbcSingerRepository implements SingerRepository {
     }
 
     @Override
+    public String findNameById(Long id) {
+        return null;
+    }
+
+    @Override
     public String findLastNameById(Long id) {
         return null;
     }

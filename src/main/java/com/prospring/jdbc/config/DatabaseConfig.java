@@ -1,14 +1,15 @@
 package com.prospring.jdbc.config;
 
+import com.prospring.jdbc.repository.SingerRepository;
+import com.prospring.jdbc.repository.SpringJdbcSingerRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.context.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
-import java.net.URL;
 
 /**
  * @author SiWoo Kim,
@@ -31,15 +32,33 @@ public class DatabaseConfig {
     @Value("${jdbc.password}")
     private String databasePassword;
 
-
-    @Lazy //Init the bean only the bean is requested
     @Bean
-    public DataSource dataSource() {
-        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriverClass(driverClass);
-        dataSource.setUrl(databaseUrl);
-        dataSource.setUsername(databaseUsername);
-        dataSource.setPassword(databasePassword);
-        return dataSource;
+    DataSource dataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .addScripts("classpath:/sql/h2-schema.sql","classpath:/sql/h2-test-data.sql")
+                .build();
     }
+
+    @Bean
+    NamedParameterJdbcTemplate namedParameterJdbcTemplate() {
+        return new NamedParameterJdbcTemplate(dataSource());
+    }
+
+    @Bean
+    SingerRepository singerRepository() {
+        SpringJdbcSingerRepository repository = new SpringJdbcSingerRepository();
+        repository.setJdbcTemplate(namedParameterJdbcTemplate());
+        return repository;
+    }
+//    @Lazy //Init the bean only the bean is requested
+//    @Bean
+//    public DataSource dataSource() {
+//        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+//        dataSource.setDriverClass(driverClass);
+//        dataSource.setUrl(databaseUrl);
+//        dataSource.setUsername(databaseUsername);
+//        dataSource.setPassword(databasePassword);
+//        return dataSource;
+//    }
 }

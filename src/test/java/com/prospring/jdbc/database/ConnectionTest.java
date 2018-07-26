@@ -31,14 +31,50 @@ public class ConnectionTest {
 
     @Test
     public void getConnection() throws SQLException {
-        c = new ClassPathXmlApplicationContext("spring/jdbc-context.xml");
-        try(Connection connection = c.getBean(DriverManagerDataSource.class).getConnection()) {
-            assertNotNull(connection);
-        }
+//        c = new ClassPathXmlApplicationContext("spring/jdbc-context.xml");
+//        try(Connection connection = c.getBean(DataSource.class).getConnection()) {
+//            assertNotNull(connection);
+//        }
         c = new AnnotationConfigApplicationContext(DatabaseConfig.class);
         try(Connection connection = c.getBean(DataSource.class).getConnection()) {
             assertNotNull(connection);
         }
     }
 
+    @Test
+    public void embeddedDBConnection() {
+
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
